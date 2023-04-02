@@ -88,7 +88,7 @@ def defineUNetModel(inputSize, filters, outputNodes):
 
 def createMaskForImage(dataset, model):
     maskTrue = []
-    maskPred = []
+    maskPredE = []
     for img, m in dataset:
         # Use the model to predict the mask for the input image
         maskPred = model.predict(img)
@@ -96,20 +96,21 @@ def createMaskForImage(dataset, model):
         maskPred = tf.expand_dims(tf.argmax(maskPred, axis=-1), axis=-1)
         # Append the ground truth mask and predicted mask to their respective lists
         maskTrue.extend(m)
-        maskPred.extend(maskPred)
+        maskPredE.extend(maskPred)
 
     # Convert the lists of masks to NumPy arrays
     maskTrue = np.array(maskTrue)
-    maskPred = np.array(maskPred)
+    maskPredE = np.array(maskPredE)
 
     # Return the ground truth and predicted masks
-    return maskTrue, maskPred
+    return maskTrue, maskPredE
 
 
 def modelEvaluation(masksTrue, masksPred, n):
 
     # Initialize empty lists to store precision and recall values
     precision, recall = [], []
+    truePositives, falsePositives, falseNegatives = 0, 0, 0
 
     for c in range(n):  # Iterate over each class label
 
